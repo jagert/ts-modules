@@ -1,0 +1,43 @@
+<div class="search-results-block">
+    <div class="search-results-header" scrollhere="isScrollTo">
+        <span>{{ 'SEARCH_RESULTS_BY' | translate }} {{ getResultsType() }}<span>
+    </div>
+    <p class="search-results-count" ng-show="results.data.length > 0">
+        <span translate="SEARCH_RESULTS_CURRENT_PAGE" translate-values="{ currentPage: results.currentPage, pageCount: numPages }"></span>
+        <span translate="SEARCH_RESULTS_COUNT" translate-values="{ resultsCount: searchResults.total }"></span>
+        <span translate="SEARCH_RESULTS_COUNT_SUFF" translate-values="{ resultsCount: searchResults.total }" translate-interpolation="messageformat"></span>
+    </p>
+    <div class="search-results">
+        <div class="blank-results" ng-show="searchResults.data.length == 0 && loaderParams.status"></div>
+        <div class="result" ng-show="searchResults.data.length > 0" ng-repeat="result in searchResults.data">
+            <h3>
+                <div class="icon">
+                    <img ng-src="{{ result.icon }}">
+                </div>
+                <a class="search-result-link" href="{{ result.link }}">
+                    <span>{{ result.title }}</span>
+                </a>
+            </h3>
+            <div class="description">
+                <!-- <span ng-if="isToLong(result.description) && !result.showFull">{{ result.description.substring(0, 256) }} <a ng-click="toggleDescription(result)">{{ 'READ_MORE' | translate }}</a></span>
+                <span ng-if="isToLong(result.description) && result.showFull"><a ng-click="toggleDescription(result)">{{ 'READ_LESS' | translate }}</a> {{ result.description }}</span>
+                <span ng-if="!isToLong(result.description)">{{ result.description }}</span> -->
+                {{ result.description }}
+            </div>
+        </div>
+        <div ng-show="searchResults.data.length == 0 && !loaderParams.status">
+            {{ 'SEARCH_RESULTS_NOT_FOUND' | translate }}
+            <strong>{{ searchResults.expression }}</strong>
+        </div>
+    </div>
+    <pagination ng-show="searchResults.data.length > 0"
+                ng-model="searchResults.currentPage"
+                ng-change="changePage()"
+                total-items="searchResults.total"
+                items-per-page="resultsOnPage"
+                max-size="5"
+                boundary-links="true"
+                previous-text="&lsaquo;" next-text="&rsaquo;"
+                first-text="&laquo;" last-text="&raquo;"
+                num-pages="numPages"></pagination>
+</div>

@@ -1,0 +1,13 @@
+<div class="fast-search-results-wrapper" ng-controller="TsFastSearchCtrl">
+    <div class="input-group">
+        <input type="text" class="form-control dropdown-toggle" ng-model="searchExpression" ng-model-options="{debounce: {'default': 200, 'blur': 0}}" placeholder="Search for..."
+               bs-options="action as action.title for action in loadedResults" placeholder="Enter address"
+               bs-typeahead data-watch-options="true" type="text" data-auto-select="true" data-prefix-event="globalSearchTypeahead"
+               data-html="true"
+               data-min-length="2">
+        <img style="position: absolute;right: 45px;top: 8px;z-index: 2;" ng-show="loadingResults" ts-src='/cssimages/ajax-loader.gif'>
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+    </div>
+</div>

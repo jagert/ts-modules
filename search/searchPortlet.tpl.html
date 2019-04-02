@@ -1,0 +1,49 @@
+<div class="search-portlet-wrapper">
+    <loader loading="loaderParams"></loader>
+    <div class="search-header-wrapper">
+       <form name="search-form" ng-submit="submit()">
+            <div class="search-label">{{ 'SEARCH' | translate }}</div>
+            <span class="search-input-wrapper">
+                <input class="search-input" ng-model="searchExpression">
+                <span class="help-button" title="{{ 'SEARCH_HELP' | translate }}" ng-click="showHint()"></span>
+            </span>
+            <button class="search-button" type="submit">
+                <span title="{{ 'SEARCH' | translate }}"></span>
+            </button>
+        </form>
+    </div>
+    <div class="search-body-wrapper">
+        <div class="search-options-wrapper">
+            <div class="option-header"><strong>{{ 'TYPE' | translate }}</strong></div>
+            <div class="options-wrapper">
+                <div class="option" ng-class="{'selected': option.selected}"
+                     ng-repeat="option in options" ng-click="clickOption(option)">
+                    <span class="option-title">{{ getOptionName(option.name) }}</span>
+                    <ui-select ng-show="showSelect(option)"
+                               ng-model="repo.selected"
+                               theme="bootstrap"
+                               name="repo"
+                               style="width: 100%">
+                        <ui-select-match placeholder="{{ 'CHOOSE_REPO' | translate }}">
+                            {{$select.selected.id}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="item in repositoryList">
+                            <div class="repository-name">{{ item.id }}</div>
+                        </ui-select-choices>
+                    </ui-select>
+                 </div>
+            </div>
+        </div>
+        <div class="search-results-wrapper" ng-show="showResults">
+            <search-results ng-show="isShown('trackstudio')"
+                            type="'trackstudio'">
+            </search-results>
+            <search-results ng-show="isShown('confluence')"
+                            type="'confluence'">
+            </search-results>
+            <search-results ng-show="isShown('mercurial')"
+                            type="'mercurial'">
+            </search-results>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,206 @@
+<form name="reportForm" ng-controller="ReportCtrl">
+    <loader loading="loaderParams.report"></loader>
+    <!-- Ссылка на список отчетов, имя отчета -->
+    <div class="report-title">
+        <a ui-sref="top.task.report" translate="REPORT.REPORTS"></a>
+        <span>:</span>
+        <span class="title">{{ report.name }}</span>
+    </div>
+    <!-- Кнопка -->
+    <div class="row" style="padding-bottom: 10px;">
+        <!-- Кнопка "Редактировать отчет" -->
+        <div class="col-sm-2" ng-show="canManage">
+            <button class="btn btn-default" type="button" ng-click="editReport()">
+                <span translate="REPORT.EDIT"></span>
+            </button>
+        </div>
+    </div>
+    <!-- Свойства отчета -->
+    <trackstudio-panel>
+        <trackstudio-panel-heading>
+            <trackstudio-panel-title>
+                <span>{{ 'REPORT.PROPERTIES' | translate }}</span>
+            </trackstudio-panel-title>
+        </trackstudio-panel-heading>
+        <trackstudio-panel-body>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ 'NAME' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">{{ report.name }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ 'TYPE' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">{{ report.type.name }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.SHARE' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        <input type="checkbox" ng-model="report.priv" disabled/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.OWNER' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        <trackstudio-user ng-if="report.owner" user="report.owner"></trackstudio-user>
+                    </div>
+                </div>
+
+                <hr ng-if="report.type.id == 'List' || report.type.id == 'Tree'">
+
+                <div class="form-group" ng-if="report.type.id == 'List' || report.type.id == 'Tree'">
+                    <div class="col-sm-3">
+                        <label class="control-label">{{ 'REPORT.USE_XSLT' | translate }}</label>
+                        <a style="padding-left: 10px;font-size: 10px;" href="http://cdp.colvir.ru/wiki/pages/viewpage.action?pageId=134712552" target="_blank">Подробнее...</a>
+                    </div>
+                    <div class="col-sm-9 form-control-static">{{ report.parameters.linkXsl }}</div>
+                </div>
+
+                <div class="form-group" ng-if="report.type.id == 'List' || report.type.id == 'Tree'">
+                    <div class="col-sm-3">
+                        <label class="control-label">{{ 'REPORT.CONTENT_TYPE' | translate }}</label>
+                        <a style="padding-left: 10px;font-size: 10px;" href="http://cdp.colvir.ru/wiki/pages/viewpage.action?pageId=134712552" target="_blank">Подробнее...</a>
+                    </div>
+                    <div class="col-sm-9 form-control-static">{{ report.parameters.contentType }}</div>
+                </div>
+            </div>
+        </trackstudio-panel-body>
+    </trackstudio-panel>
+    <!-- Параметры отчета -->
+    <trackstudio-panel ng-if="report.type.id == 'Distribution' || report.type.id == 'UserWorkload'">
+        <trackstudio-panel-heading>
+            <trackstudio-panel-title>
+                <span>{{ 'REPORT.PARAMETERS' | translate }}</span>
+            </trackstudio-panel-title>
+        </trackstudio-panel-heading>
+        <trackstudio-panel-body>
+            <div class="form-horizontal">
+                <!-- параметры отчёта Distribution -->
+                <div class="form-group" ng-if="report.type.id == 'Distribution'">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.DISTRIBUTION.XFIELD' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        {{ report.parameters.xfield.value }}
+                    </div>
+                </div>
+                <div class="form-group" ng-if="report.type.id == 'Distribution'">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.DISTRIBUTION.YFIELD' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        {{ report.parameters.yfield.value }}
+                    </div>
+                </div>
+                <div class="form-group" ng-if="report.type.id == 'Distribution'">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.DISTRIBUTION.VALUE' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        {{ report.parameters.value.value }}
+                    </div>
+                </div>
+                <div class="form-group" ng-if="report.type.id == 'Distribution'">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.DISTRIBUTION.FUNCTION' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        {{ report.parameters.function.value }}
+                    </div>
+                </div>
+
+                <!-- параметры отчёта UserWorkload -->
+                <div class="form-group" ng-if="report.type.id == 'UserWorkload'">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.USERWORKLOAD.MESSAGE_HOURS_FORMAT' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        {{ report.parameters.hformat.value }}
+                    </div>
+                </div>
+                <div class="form-group" ng-if="report.type.id == 'UserWorkload'">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.USERWORKLOAD.HIDE_HANDLERS' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        <input type="checkbox" ng-model="report.parameters.hideHandlers" disabled/>
+                    </div>
+                </div>
+                <div class="form-group" ng-if="report.type.id == 'UserWorkload'">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.USERWORKLOAD.WORKLOAD_FOR_PROJECTS' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        <input type="checkbox" ng-model="report.parameters.workloadProject" disabled/>
+                    </div>
+                </div>
+            </div>
+        </trackstudio-panel-body>
+    </trackstudio-panel>
+    <!-- Фильтрация -->
+    <trackstudio-panel>
+        <trackstudio-panel-heading>
+            <trackstudio-panel-title>
+                <span>{{ 'REPORT.FILTER_PROPERTIES' | translate }}</span>
+            </trackstudio-panel-title>
+        </trackstudio-panel-heading>
+        <trackstudio-panel-body>
+            <loader loading="loaderParams.filter"></loader>
+            <filter filter="report.filter"></filter>
+        </trackstudio-panel-body>
+    </trackstudio-panel>
+    <!-- Построение отчета -->
+    <trackstudio-panel>
+        <trackstudio-panel-heading>
+            <trackstudio-panel-title>
+                <span>{{ 'REPORT.BUILDING' | translate }}</span>
+            </trackstudio-panel-title>
+        </trackstudio-panel-heading>
+        <trackstudio-panel-body>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.FORMAT' | translate }}</label>
+                    <div class="col-sm-9 form-control-static" style="width: 330px;">
+                        <ui-select required ng-model="report.format" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                            <ui-select-match allow-clear placeholder="{{ 'REPORT.CHOOSE_FORMAT' | translate }}">
+                                <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                                    {{ $select.selected.name }}
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="format in formats | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                <div style="white-space: normal" ng-bind="format.name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="report.format.code == 'xml'">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.COMPRESSED' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        <input type="checkbox" ng-model="report.compressed"/>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="report.type.id == 'Distribution' || report.type.id == 'UserWorkload'">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.PIE_CHART' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        <input type="checkbox" ng-model="report.chart"/>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="report.format.code == 'xml'">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.ENCODING' | translate }}</label>
+                    <div class="col-sm-9 form-control-static" style="width: 330px;">
+                        <ui-select ng-model="report.encoding" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                            <ui-select-match allow-clear placeholder="{{ 'REPORT.CHOOSE_ENCODING' | translate }}">
+                                <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                                    {{ $select.selected }}
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="encoding in encodings | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                <div style="white-space: normal" ng-bind="encoding"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-12 control-label">
+                        <span class="pull-left text-danger" ng-show="reportForm.$invalid" translate="FIELDS_NOT_FILLED"></span>
+                        <button class="btn btn-default" type="button" ng-disabled="reportForm.$invalid" ng-click="buildReport()">
+                            <span translate="REPORT.BUILD"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </trackstudio-panel-body>
+    </trackstudio-panel>
+</form>

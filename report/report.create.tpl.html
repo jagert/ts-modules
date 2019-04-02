@@ -1,0 +1,196 @@
+<form name="reportEditForm" class="form-horizontal">
+    <loader loading="loaderParams"></loader>
+    <div class="modal-header">
+        <h4>{{ 'REPORT.NEW_REPORT' | translate }}</h4>
+    </div>
+    <div class="modal-body" id="create-report-modal-body">
+        <!-- Свойства отчета -->
+        <trackstudio-panel id="'report-properties'" collapsed="false">
+            <trackstudio-panel-heading>
+                <trackstudio-panel-title>
+                    <span translate="REPORT.PROPERTIES"></span>
+                </trackstudio-panel-title>
+            </trackstudio-panel-heading>
+            <trackstudio-panel-body>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ 'NAME' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        <input class="form-control" type="text" ng-model="report.name" name="reportName"
+                               maxlength="200" placeholder="{{ 'NAME' | translate }}" required/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ 'TYPE' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        <ui-select required ng-model="report.type" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                            <ui-select-match allow-clear>
+                                <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                                    {{ $select.selected.name }}
+                                </span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="type in reportTypes | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                <div style="white-space: normal" ng-bind="type.name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.FILTER' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        <ui-select required ng-model="report.filter" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                            <ui-select-match allow-clear>
+                                <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ $select.selected.name }}</span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="filter in values.filter | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                <div style="white-space: normal" ng-bind="filter.name"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ 'REPORT.SHARE' | translate }}</label>
+                    <div class="col-sm-9 form-control-static">
+                        <input type="checkbox" ng-model="report.priv" ng-disable="!canBeShared"/>
+                    </div>
+                </div>
+
+                <hr ng-if="report.type.id == 'List' || report.type.id == 'Tree'">
+
+                <div class="form-group" ng-if="report.type.id == 'List' || report.type.id == 'Tree'">
+                    <div class="col-sm-3">
+                        <label class="control-label">{{ 'REPORT.USE_XSLT' | translate }}</label>
+                        <a style="padding-left: 10px;font-size: 10px;" href="http://cdp.colvir.ru/wiki/pages/viewpage.action?pageId=134712552" target="_blank">Подробнее...</a>
+                    </div>
+                    <div class="col-sm-9 form-control-static">
+                        <ui-select required ng-model="report.parameters.linkXsl" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                            <ui-select-match allow-clear>
+                                <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ $select.selected }}</span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="script in values.linkXsl | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                <div style="white-space: normal" ng-bind="script"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="report.type.id == 'List' || report.type.id == 'Tree'">
+                    <div class="col-sm-3">
+                        <label class="control-label">{{ 'REPORT.CONTENT_TYPE' | translate }}</label>
+                        <a style="padding-left: 10px;font-size: 10px;" href="http://cdp.colvir.ru/wiki/pages/viewpage.action?pageId=134712552" target="_blank">Подробнее...</a>
+                    </div>
+                    <div class="col-sm-9 form-control-static">
+                        <ui-select required ng-model="report.parameters.contentType" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                            <ui-select-match allow-clear>
+                                <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ $select.selected }}</span>
+                            </ui-select-match>
+                            <ui-select-choices repeat="type in values.contentType | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                <div style="white-space: normal" ng-bind="type"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </trackstudio-panel-body>
+        </trackstudio-panel>
+
+        <!-- Параметры отчета -->
+        <trackstudio-panel id="'report-parameters'" ng-if="report.type.id == 'Distribution' || report.type.id == 'UserWorkload'" collapsed="false">
+            <trackstudio-panel-heading>
+                <trackstudio-panel-title>
+                    <span translate="REPORT.PARAMETERS"></span>
+                </trackstudio-panel-title>
+            </trackstudio-panel-heading>
+            <trackstudio-panel-body>
+                <div class="form-horizontal">
+                    <!-- параметры отчёта Distribution -->
+                    <div class="form-group" ng-if="report.type.id == 'Distribution'">
+                        <label class="col-sm-3 control-label">{{ 'REPORT.DISTRIBUTION.XFIELD' | translate }}</label>
+                        <div class="col-sm-9 form-control-static">
+                            <ui-select required ng-model="report.parameters.xfield" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                                <ui-select-match allow-clear>
+                                    <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ $select.selected.value }}</span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="field in values.field | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                    <div style="white-space: normal" ng-bind="field.value"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="report.type.id == 'Distribution'">
+                        <label class="col-sm-3 control-label">{{ 'REPORT.DISTRIBUTION.YFIELD' | translate }}</label>
+                        <div class="col-sm-9 form-control-static">
+                            <ui-select required ng-model="report.parameters.yfield" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                                <ui-select-match allow-clear>
+                                    <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ $select.selected.value }}</span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="field in values.field | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                    <div style="white-space: normal" ng-bind="field.value"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="report.type.id == 'Distribution'">
+                        <label class="col-sm-3 control-label">{{ 'REPORT.DISTRIBUTION.VALUE' | translate }}</label>
+                        <div class="col-sm-9 form-control-static">
+                            <ui-select required ng-model="report.parameters.value" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                                <ui-select-match allow-clear>
+                                    <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ $select.selected.value }}</span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="value in values.value | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                    <div style="white-space: normal" ng-bind="value.value"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="report.type.id == 'Distribution'">
+                        <label class="col-sm-3 control-label">{{ 'REPORT.DISTRIBUTION.FUNCTION' | translate }}</label>
+                        <div class="col-sm-9 form-control-static">
+                            <ui-select required ng-model="report.parameters.function" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                                <ui-select-match allow-clear>
+                                    <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ $select.selected.value }}</span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="function in values.function | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                    <div style="white-space: normal" ng-bind="function.value"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+
+                    <!-- параметры отчёта UserWorkload -->
+                    <div class="form-group" ng-if="report.type.id == 'UserWorkload'">
+                        <label class="col-sm-3 control-label">{{ 'REPORT.USERWORKLOAD.MESSAGE_HOURS_FORMAT' | translate }}</label>
+                        <div class="col-sm-9 form-control-static">
+                            <ui-select required ng-model="report.parameters.hformat" theme="bootstrap" style="min-width: 200px;" hide-on="hide.scroll" append-to-body="true">
+                                <ui-select-match allow-clear>
+                                    <span style="display: inline-block; width:230px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">{{ $select.selected.value }}</span>
+                                </ui-select-match>
+                                <ui-select-choices repeat="format in values.hformat | filter: $select.search" refresh="refresh($select.search)" refresh-delay="300">
+                                    <div style="white-space: normal" ng-bind="format.value"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="report.type.id == 'UserWorkload'">
+                        <label class="col-sm-3 control-label">{{ 'REPORT.USERWORKLOAD.HIDE_HANDLERS' | translate }}</label>
+                        <div class="col-sm-9 form-control-static">
+                            <input type="checkbox" ng-model="report.parameters.hideHandlers" required/>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="report.type.id == 'UserWorkload'">
+                        <label class="col-sm-3 control-label">{{ 'REPORT.USERWORKLOAD.WORKLOAD_FOR_PROJECTS' | translate }}</label>
+                        <div class="col-sm-9 form-control-static">
+                            <input type="checkbox" ng-model="report.parameters.workloadProject" required/>
+                        </div>
+                    </div>
+                </div>
+            </trackstudio-panel-body>
+        </trackstudio-panel>
+    </div>
+    <div class="modal-footer">
+        <span class="pull-left text-danger" ng-show="reportEditForm.$invalid" translate="FIELDS_NOT_FILLED"></span>
+        <button type="button" class="btn btn-default" translate="SAVE" ng-disabled="reportEditForm.$invalid" ng-click="save()"></button>
+        <button type="button" class="btn btn-warning" translate="CANCEL" ng-click="cancel()"></button>
+    </div>
+</form>

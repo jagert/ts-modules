@@ -1,0 +1,24 @@
+<div ng-controller="ReportListCtrl" style="position: relative;">
+    <loader loading="loaderParams"></loader>
+    <div class="row" style="padding-bottom: 10px;">
+        <!-- Кнопка "Создать отчет" -->
+        <div class="col-sm-2" ng-show="canManage">
+        	<button class="btn btn-default" type="button" ng-click="createReport()">
+                <span translate="REPORT.CREATE"></span>
+            </button>
+        </div>
+        <!-- Кнопка "Клонировать отчет" -->
+        <div class="col-sm-2" ng-show="canManage">
+            <button class="btn btn-default" type="button" ng-disabled="!isSelected()" ng-click="cloneReports()">
+                <span translate="REPORT.CLONE"></span>
+            </button>
+        </div>
+        <!-- Кнопка "Удалить отчет" -->
+        <div class="col-sm-2" ng-show="canManage">
+            <button class="btn btn-default" type="button" ng-disabled="!isSelected()" ng-click="deleteReports()">
+                <span translate="REPORT.DELETE"></span>
+            </button>
+        </div>
+    </div>
+    <div class="reports-grid" ui-grid="gridOptions" ui-grid-selection ui-grid-auto-resize ui-grid-resize-columns></div>
+</div>
